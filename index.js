@@ -23,18 +23,15 @@ const comments = [
     },
 ];
 
-
 const renderComments = () => {
     const commentsElements = comments.map((comment) => {
         return `   <li class="comment">
-        <div class="comment-header">
-            <div>${comment.name}</div>
+        <div class="comment-header">        
+            <div class="comment-name">${comment.name}</div>
             <div>${comment.time}</div>
         </div>
         <div class="comment-body">
-            <div class="comment-text">
-                ${comment.text}
-            </div>
+            <div class="comment-text">${comment.text}</div>
         </div>
         <div class="comment-footer">
             <div class="likes">
@@ -53,14 +50,24 @@ const renderComments = () => {
 
     likeButtonElements.forEach((likeButton, index) => {
         likeButton.addEventListener('click', (event) => switchLike(event, index))
-    })    
+    })
+
+    
+    const commentsItems = document.querySelectorAll('.comment');
+    commentsItems.forEach((comment) => {
+        comment.addEventListener('click', pushText)
+    })
 }
 
-function pushText(event) {
-    console.log(event.target, event.currentTarget);
+function pushText(event) {    
+    const comment = event.currentTarget;
+    const name = comment.querySelector('.comment-name');
+    const text = comment.querySelector('.comment-text');
+    textInputElement.value = '- ' + text.textContent + '\n' + name.textContent + ',';
 }
 
-function switchLike(event, index) {    
+function switchLike(event, index) {
+    event.stopPropagation();
     const button = event.target;
     const counter = button.previousElementSibling;
 
@@ -79,6 +86,7 @@ function switchLike(event, index) {
 }
 
 renderComments()
+
 
 
 function time() {
@@ -112,9 +120,17 @@ function newComment() {
     }
 
     comments.push({
-        name: nameInputElement.value,
+        name: nameInputElement.value
+        .replaceAll("<", "&lt;")        
+        .replaceAll(">", "&gt;")        
+        .replaceAll("&", "&amp;")
+        .replaceAll('"', "&quot;"),
         time: time(),
-        text: textInputElement.value,
+        text: textInputElement.value
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll("&", "&amp;")
+            .replaceAll('"', "&quot;"),
         likesCounter: 0,
         isLiked: false
     })
@@ -126,4 +142,5 @@ function newComment() {
     textInputElement.value = "";
 
 }
+
 
